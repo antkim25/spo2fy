@@ -5,12 +5,13 @@ from threading import Thread
 sys_random = random.SystemRandom()
 mixer.init()
 
-playlist = "study"
-
 class Player:
-    def __init__(self, paused):
+    paused = False
+    playlist = ""
+
+    def __init__(self):
         print("----------------------------")
-        print("Spotify 2 (Version Beta 1.0)")
+        print("Spotify 2 (Version Beta 1.1)")
         print("----------------------------")
         print("Basic Commands")
         print("Pause: p")
@@ -18,7 +19,7 @@ class Player:
         print("Toggle: t")
         print("Skip: s")
         print("----------------------------")
-        self.paused = paused
+        self.playlist = input("Select Playlist: ")
 
     def underscoreRemover(self, s):
         newS = ""
@@ -30,8 +31,8 @@ class Player:
         return newS
 
     def songPick(self):
-        song = sys_random.choice(os.listdir(playlist))
-        songPath = playlist + "/" + song
+        song = sys_random.choice(os.listdir(self.playlist))
+        songPath = self.playlist + "/" + song
         return song, songPath
 
     def songPlayer(self):
@@ -43,49 +44,40 @@ class Player:
         leftParen = song.index("(")
         print("Currently Playing: " + self.underscoreRemover(song[0:leftParen]) + "by " + self.underscoreRemover(song[leftParen+1:-5]))
 
-    def skip(self):
-        song, songPath = self.songPick()
-        mixer.music.load(songPath)
-        mixer.music.set_volume(0.7)
-        mixer.music.play()
-
-        leftParen = song.index("(")
-        print("Currently Playing: " + self.underscoreRemover(song[0:leftParen]) + "by " + self.underscoreRemover(song[leftParen+1:-5]))
-
-
     def inputChecker(self):
         while True:
             time.sleep(1.1)
             x = input()
-            if (x == "Pause" or x == "pause" or x == "p"):
-                self.paused = True
-                print("Paused!")
-                mixer.music.pause()
-            elif (x == "Unpause" or x == "unpause" or x == "u"):
-                self.paused = False
-                print("Unpaused!")
-                mixer.music.unpause()
-            elif (x == "T" or x == "t"):
+            if (x in ["Pause", "pause", "P", "p"]):
+                self.pause()
+            elif (x in ["Unpause", "unpause", "U", "u"]):
+                self.unpause()
+            elif (x in ["Toggle", "toggle", "T", "t"]):
                 if mixer.music.get_busy():
-                    self.paused = True
-                    print("Paused!")
-                    mixer.music.pause()
+                    self.pause()
                 else:
-                    self.paused = False
-                    print("Unpaused!")
-                    mixer.music.unpause()
-            elif (x == "Skip" or x == "skip" or x == "s"):
+                    self.unpause()
+            elif (x in ["Skip", "skip", "S", "s"]):
                 print("Skipped!")
-                self.skip()
+                self.songPlayer()
+    
+    def pause(self):
+        self.paused = True
+        print("Paused!")
+        mixer.music.pause()
+    
+    def unpause(self):
+        self.paused = False
+        print("Unpaused!")
+        mixer.music.unpause()
 
     def playChecker(self):
         while True:
             time.sleep(1)
             if not self.paused and not mixer.music.get_busy():
-                self.skip()
+                self.songPlayer()
 
-paused = False
-player = Player(paused)
+player = Player()
 songPlay = Thread(target = player.songPlayer)
 inputCheck = Thread(target = player.inputChecker)
 playCheck = Thread(target = player.playChecker)
