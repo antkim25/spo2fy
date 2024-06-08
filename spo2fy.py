@@ -8,11 +8,12 @@ mixer.init()
 class Player:
     paused = False
     playlist = ""
+    curSong = ""
 
     def __init__(self):
-        print("----------------------------")
-        print("Spotify 2 (Version Beta 1.1)")
-        print("----------------------------")
+        print("------------------")
+        print("Spo2fy Version 1.2")
+        print("------------------")
         print("Basic Commands")
         print("Pause: p")
         print("Unpause: u")
@@ -31,9 +32,12 @@ class Player:
         return newS
 
     def songPick(self):
-        song = sys_random.choice(os.listdir(self.playlist))
-        songPath = self.playlist + "/" + song
-        return song, songPath
+        newSong = sys_random.choice(os.listdir(self.playlist))
+        while newSong == self.curSong:
+            newSong = sys_random.choice(os.listdir(self.playlist))
+        self.curSong = newSong
+        songPath = self.playlist + "/" + self.curSong
+        return self.curSong, songPath
 
     def songPlayer(self):
         song, songPath = self.songPick()
