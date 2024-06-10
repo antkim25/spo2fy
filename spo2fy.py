@@ -9,15 +9,17 @@ class Player:
     paused = False
     playlist = ""
     curSong = ""
+    looping = False
 
     def __init__(self):
-        print("------------------")
-        print("Spo2fy Version 1.2")
-        print("------------------")
+        print("----------------------------")
+        print("Spo2fy (Version Beta 1.3)")
+        print("----------------------------")
         print("Basic Commands")
         print("Pause: p")
         print("Unpause: u")
         print("Toggle: t")
+        print("Toggle Loop: l")
         print("Skip: s")
         print("----------------------------")
         self.playlist = input("Select Playlist: ")
@@ -30,23 +32,30 @@ class Player:
             else:
                 newS += " "
         return newS
-
-    def songPick(self):
+    
+    def songPicker(self):
         newSong = sys_random.choice(os.listdir(self.playlist))
         while newSong == self.curSong:
             newSong = sys_random.choice(os.listdir(self.playlist))
         self.curSong = newSong
-        songPath = self.playlist + "/" + self.curSong
-        return self.curSong, songPath
+    
+    def songPathMaker(self, song):
+        return self.playlist + "/" + song
+    
+    def songFormat(self, song):
+        leftParen = song.index("(")
+        return self.underscoreRemover(song[0:leftParen]) + "by " + self.underscoreRemover(song[leftParen+1:-5])
 
     def songPlayer(self):
-        song, songPath = self.songPick()
+        if not self.looping:
+            self.songPicker()
+        
+        songPath = self.songPathMaker(self.curSong)
         mixer.music.load(songPath)
         mixer.music.set_volume(0.7)
         mixer.music.play()
 
-        leftParen = song.index("(")
-        print("Currently Playing: " + self.underscoreRemover(song[0:leftParen]) + "by " + self.underscoreRemover(song[leftParen+1:-5]))
+        print("Currently Playing: " + self.songFormat(self.curSong))
 
     def inputChecker(self):
         while True:
@@ -61,6 +70,12 @@ class Player:
                     self.pause()
                 else:
                     self.unpause()
+            elif (x in ["Loop", "loop", "L", "l"]):
+                if self.looping:
+                    print("No longer looping: " + self.songFormat(self.curSong))
+                else:
+                    print("Now looping: " + self.songFormat(self.curSong))
+                self.looping = not self.looping
             elif (x in ["Skip", "skip", "S", "s"]):
                 print("Skipped!")
                 self.songPlayer()
