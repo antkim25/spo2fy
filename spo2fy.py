@@ -14,7 +14,7 @@ class Player:
 
     def __init__(self):
         print("----------------------------")
-        print("Spotify 2 (Version Beta 1.4)")
+        print("Spo2fy (Version Beta 1.4)")
         print("----------------------------")
         print("Basic Commands")
         print("Pause: p")
