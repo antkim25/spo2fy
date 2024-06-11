@@ -10,10 +10,11 @@ class Player:
     playlist = ""
     curSong = ""
     looping = False
+    playlistSize = 0
 
     def __init__(self):
         print("----------------------------")
-        print("Spo2fy (Version Beta 1.3)")
+        print("Spotify 2 (Version Beta 1.4)")
         print("----------------------------")
         print("Basic Commands")
         print("Pause: p")
@@ -21,8 +22,13 @@ class Player:
         print("Toggle: t")
         print("Toggle Loop: l")
         print("Skip: s")
+        print("Current Song: ?")
         print("----------------------------")
         self.playlist = input("Select Playlist: ")
+
+        for path in os.scandir(self.playlist):
+            if path.is_file():
+                self.playlistSize += 1
 
     def underscoreRemover(self, s):
         newS = ""
@@ -35,8 +41,10 @@ class Player:
     
     def songPicker(self):
         newSong = sys_random.choice(os.listdir(self.playlist))
-        while newSong == self.curSong:
-            newSong = sys_random.choice(os.listdir(self.playlist))
+
+        if self.playlistSize != 1:
+            while newSong == self.curSong:
+                newSong = sys_random.choice(os.listdir(self.playlist))
         self.curSong = newSong
     
     def songPathMaker(self, song):
@@ -55,7 +63,8 @@ class Player:
         mixer.music.set_volume(0.7)
         mixer.music.play()
 
-        print("Currently Playing: " + self.songFormat(self.curSong))
+        if not self.looping:
+            print("Currently Playing: " + self.songFormat(self.curSong))
 
     def inputChecker(self):
         while True:
@@ -76,6 +85,8 @@ class Player:
                 else:
                     print("Now looping: " + self.songFormat(self.curSong))
                 self.looping = not self.looping
+            elif (x == "?"):
+                print("Currently Playing: " + self.songFormat(self.curSong))
             elif (x in ["Skip", "skip", "S", "s"]):
                 print("Skipped!")
                 self.songPlayer()
