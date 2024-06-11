@@ -18,7 +18,7 @@ class Player:
     # Starting Instructions & Playlist Selecting
     def __init__(self):
         print("------------------")
-        print("Spo2fy Version 1.5")
+        print("Spo2fy Version 1.6")
         print("------------------")
         print("Basic Commands")
         print("Pause: p")
@@ -27,7 +27,8 @@ class Player:
         print("Toggle Loop: l")
         print("Skip: s")
         print("Current Song: ?")
-        print("------------------")
+        print("Change Playlists: c")
+        print("----------------------------")
 
         self.playlist = input("Select Playlist: ")
 
@@ -89,25 +90,25 @@ class Player:
     def inputChecker(self):
         while True:
             # Input from user
-            x = input()
+            inp = input()
 
             # Pausing
-            if (x in ["Pause", "pause", "P", "p"]):
+            if (inp in ["Pause", "pause", "P", "p"]):
                 self.pause()
 
             # Unpausing
-            elif (x in ["Unpause", "unpause", "U", "u", "Play", "play"]):
+            elif (inp in ["Unpause", "unpause", "U", "u", "Play", "play"]):
                 self.unpause()
 
             # Toggling for Playing/Pausing
-            elif (x in ["Toggle", "toggle", "T", "t"]):
+            elif (inp in ["Toggle", "toggle", "T", "t"]):
                 if mixer.music.get_busy():
                     self.pause()
                 else:
                     self.unpause()
 
             # Toggling for Looping
-            elif (x in ["Loop", "loop", "L", "l"]):
+            elif (inp in ["Loop", "loop", "L", "l"]):
                 if self.looping:
                     print("No longer looping: " + self.songFormat(self.curSong))
                 else:
@@ -115,13 +116,20 @@ class Player:
                 self.looping = not self.looping
 
             # What song is currently playing
-            elif (x in ["?", "Current", "current", "Cur", "cur"]):
+            elif (inp in ["?", "Current", "current", "Cur", "cur"]):
                 print("Currently Playing: " + self.songFormat(self.curSong))
 
             # Skipping
-            elif (x in ["Skip", "skip", "S", "s"]):
+            elif (inp in ["Skip", "skip", "S", "s"]):
                 print("Skipped!")
                 self.songPlayer()
+
+            # Changing Playlists
+            elif (inp in ["Change", "change", "C", "c"]):
+                self.playlist = input("Select playlist you'd like to switch to: ")
+                print("Changed playlist to " + self.playlist)
+                self.songPlayer()
+
     
     # Pausing
     def pause(self):
