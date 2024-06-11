@@ -1,5 +1,5 @@
 # Import libraries
-import time, random, os
+import time, random, os, shutil
 from pygame import mixer
 from threading import Thread
 
@@ -18,7 +18,7 @@ class Player:
     # Starting Instructions & Playlist Selecting
     def __init__(self):
         print("------------------")
-        print("Spo2fy Version 1.6")
+        print("Spotify 2 (Version Beta 1.7)")
         print("------------------")
         print("Basic Commands")
         print("Pause: p")
@@ -28,7 +28,8 @@ class Player:
         print("Skip: s")
         print("Current Song: ?")
         print("Change Playlists: c")
-        print("----------------------------")
+        print("Favorite Current Song: f")
+        print("------------------")
 
         self.playlist = input("Select Playlist: ")
 
@@ -130,6 +131,10 @@ class Player:
                 print("Changed playlist to " + self.playlist)
                 self.songPlayer()
 
+            # Favoriting Songs
+            elif (inp in ["Favorite", "favorite", "F", "f"]):
+                song = self.songFormat(self.curSong)
+                self.favorite(song)
     
     # Pausing
     def pause(self):
@@ -142,6 +147,51 @@ class Player:
         self.paused = False
         print("Unpaused!")
         mixer.music.unpause()
+
+    # Favoriting
+    def favorite(self, song):
+        favesA = open("favorites.txt", "a")
+        favesR = open("favorites.txt", "r")
+        favesList = favesR.read()
+        if song not in favesList:
+            print("Favorited song!")
+            if len(favesList) == 0:
+                favesA.write(song)
+            else:
+                favesA.write("\n" + song)
+            fp = open("f/" + self.curSong, 'x')
+            fp.close()
+            shutil.copyfile(self.playlist + "/" + self.curSong, "f/" + self.curSong)
+        else:
+            print("Unfavorited song!")
+            newFaves = open("newFaves.txt", "x")
+            newFaves.close()
+            newFavesA = open("newFaves.txt", "a")
+            favesR = open("favorites.txt", "r")
+            lines = favesR.readlines()
+
+            if len(lines) != 1:
+                # Added means whether or not the first line was added
+                added = False
+                if lines[0][:-1] != song:
+                    newFavesA.write(lines[0][:-1])
+                    added = True
+                for i in range (1,len(lines) - 1):
+                    if lines[i][:-1] != song:
+                        if not added:
+                            newFavesA.write(lines[i][:-1])
+                            added = True
+                        else:
+                            newFavesA.write("\n" + lines[i][:-1])
+                if lines[len(lines) - 1] != song:
+                    newFavesA.write("\n" + lines[len(lines) - 1])
+
+            newFavesA.close()
+            favesR.close()
+
+            shutil.copy2("newFaves.txt", "favorites.txt")
+            os.remove("newFaves.txt")
+            os.remove("f/" + self.curSong)
 
     # Automatically plays next song when song is over
     def playChecker(self):
