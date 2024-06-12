@@ -9,7 +9,7 @@ mixer.init()
 
 # Music Player Class
 class Player:
-    version = 2.1
+    version = 2.2
     paused = False
     playlist = ""
     curSong = ""
@@ -27,7 +27,7 @@ class Player:
     # Printing instructions/commands
     def printInstructions(self):
         print("----------------------------")
-        print("Spo2fy (Version Beta " + str(self.version) + ")")
+        print("Spo2fy 2 (Version Beta " + str(self.version) + ")")
         print("----------------------------")
         print("All Commands")
         print("Pause: p")
@@ -126,7 +126,10 @@ class Player:
 
             # What song is currently playing
             elif (inp in ["?", "Current", "current", "Cur", "cur"]):
-                print("Currently Playing: " + self.songFormat(self.curSong))
+                if self.looping:
+                    print("(Playlist: " + self.playlist + "): Currently Looping: " + self.songFormat(self.curSong))
+                else:
+                    print("(Playlist: " + self.playlist + "): Currently Playing: " + self.songFormat(self.curSong))
 
             # Skipping
             elif (inp in ["Skip", "skip", "S", "s"]):
