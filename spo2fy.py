@@ -17,9 +17,9 @@ class Player:
 
     # Starting Instructions & Playlist Selecting
     def __init__(self):
-        print("----------------------------")
-        print("Spo2fy (Version Beta 1.8)")
-        print("----------------------------")
+        print("------------------")
+        print("Spo2fy Version 2.0")
+        print("------------------")
         print("Basic Commands")
         print("Pause: p")
         print("Unpause: u")
@@ -29,14 +29,16 @@ class Player:
         print("Current Song: ?")
         print("Change Playlists: c")
         print("Favorite Current Song: f")
-        print("----------------------------")
+        print("------------------")
 
         self.playlist = input("Select Playlist: ")
+        while self.playlist not in os.listdir("playlists"):
+            self.playlist = input("Playlist not found, try again: ")
 
     # Returns size of given playlist
     def getPlaylistSize(self, p):
         size = 0
-        for path in os.scandir(p):
+        for path in os.scandir("playlists/"+p):
             if path.is_file():
                 size += 1
         return size
@@ -53,18 +55,18 @@ class Player:
     
     # Randomly picks song
     def songPicker(self):
-        newSong = sys_random.choice(os.listdir(self.playlist))
+        newSong = sys_random.choice(os.listdir("playlists/"+self.playlist))
 
         # Ensures "no song twice in a row" doesn't apply for one-song playlists
         if self.getPlaylistSize(self.playlist) != 1:
             # No song will play twice in a row
             while newSong == self.curSong:
-                newSong = sys_random.choice(os.listdir(self.playlist))
+                newSong = sys_random.choice(os.listdir("playlists/"+self.playlist))
         self.curSong = newSong
     
     # Returns path of song given song name and playlist
     def songPathMaker(self, song):
-        return self.playlist + "/" + song
+        return "playlists/" + self.playlist + "/" + song
     
     # Returns formatted message for song title and artist
     def songFormat(self, song):
@@ -128,6 +130,8 @@ class Player:
             # Changing Playlists
             elif (inp in ["Change", "change", "C", "c"]):
                 self.playlist = input("Select playlist you'd like to switch to: ")
+                while self.playlist not in os.listdir("playlists/"):
+                    self.playlist = input("Playlist not found, try again: ")
                 print("Changed playlist to " + self.playlist)
                 self.songPlayer()
 
@@ -159,9 +163,9 @@ class Player:
                 favesA.write(song)
             else:
                 favesA.write("\n" + song)
-            fp = open("f/" + self.curSong, 'x')
+            fp = open("playlists/favorited/" + self.curSong, 'x')
             fp.close()
-            shutil.copyfile(self.playlist + "/" + self.curSong, "f/" + self.curSong)
+            shutil.copyfile("playlists/" + self.playlist + "/" + self.curSong, "playlists/favorited/" + self.curSong)
         else:
             print("Unfavorited song!")
             newFaves = open("newFaves.txt", "x")
@@ -194,7 +198,7 @@ class Player:
 
             shutil.copy2("newFaves.txt", "favorites.txt")
             os.remove("newFaves.txt")
-            os.remove("f/" + self.curSong)
+            os.remove("playlists/favorited/" + self.curSong)
 
     # Automatically plays next song when song is over
     def playChecker(self):
