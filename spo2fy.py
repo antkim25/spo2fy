@@ -9,12 +9,13 @@ mixer.init()
 
 # Music Player Class
 class Player:
-    version = 2.2
+    version = 2.3
     paused = False
     playlist = ""
     curSong = ""
     looping = False
     playlistSize = 0
+    volume = 0.5
 
     # Starting Instructions & Playlist Selecting
     def __init__(self):
@@ -26,20 +27,21 @@ class Player:
         
     # Printing instructions/commands
     def printInstructions(self):
-        print("----------------------------")
-        print("Spo2fy 2 (Version Beta " + str(self.version) + ")")
-        print("----------------------------")
+        print("------------------")
+        print("Spo2fy Version", str(self.version))
+        print("------------------")
         print("All Commands")
+        print("Change Playlists: c")
+        print("Current Song: ?")
+        print("Favorite/Unfavorite Current Song: f")
+        print("Instructions/Help: h")
         print("Pause: p")
-        print("Unpause: u")
+        print("Skip: s")
         print("Toggle: t")
         print("Toggle Loop: l")
-        print("Skip: s")
-        print("Current Song: ?")
-        print("Change Playlists: c")
-        print("Favorite Current Song: f")
-        print("Instructions/Help: h")
-        print("----------------------------")
+        print("Unpause: u")
+        print("Volume Down/Up: </>")
+        print("------------------")
 
     # Returns size of given playlist
     def getPlaylistSize(self, p):
@@ -88,7 +90,7 @@ class Player:
         # Load song into mixer and play
         songPath = self.songPathMaker(self.curSong)
         mixer.music.load(songPath)
-        mixer.music.set_volume(0.7)
+        mixer.music.set_volume(self.volume)
         mixer.music.play()
 
         # Prints the currently playing message (if not looping)
@@ -152,6 +154,18 @@ class Player:
             # Displaying information menu
             elif (inp in ["Help", "help", "Info", "info", "H", "h", "I", "i"]):
                 self.printInstructions()
+
+            # Volume Change
+            elif inp == ">":
+                if round(self.volume + 0.1, 1) <= 1:
+                    mixer.music.set_volume(round(self.volume + 0.1, 1))
+                    self.volume = round(self.volume + 0.1, 1)
+                    print("Volume Changed to:", self.volume)
+            elif inp == "<":
+                if round(self.volume - 0.1, 1) >= 0:
+                    mixer.music.set_volume(round(self.volume - 0.1, 1))
+                    self.volume = round(self.volume - 0.1, 1)
+                    print("Volume Changed to:", self.volume)
     
     # Pausing
     def pause(self):
