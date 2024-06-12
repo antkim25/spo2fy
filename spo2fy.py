@@ -9,6 +9,7 @@ mixer.init()
 
 # Music Player Class
 class Player:
+    version = 2.1
     paused = False
     playlist = ""
     curSong = ""
@@ -17,10 +18,18 @@ class Player:
 
     # Starting Instructions & Playlist Selecting
     def __init__(self):
-        print("------------------")
-        print("Spo2fy Version 2.0")
-        print("------------------")
-        print("Basic Commands")
+        self.printInstructions()
+
+        self.playlist = input("Select Playlist: ")
+        while self.playlist not in os.listdir("playlists"):
+            self.playlist = input("Playlist not found, try again: ")
+        
+    # Printing instructions/commands
+    def printInstructions(self):
+        print("----------------------------")
+        print("Spo2fy (Version Beta " + str(self.version) + ")")
+        print("----------------------------")
+        print("All Commands")
         print("Pause: p")
         print("Unpause: u")
         print("Toggle: t")
@@ -29,11 +38,8 @@ class Player:
         print("Current Song: ?")
         print("Change Playlists: c")
         print("Favorite Current Song: f")
-        print("------------------")
-
-        self.playlist = input("Select Playlist: ")
-        while self.playlist not in os.listdir("playlists"):
-            self.playlist = input("Playlist not found, try again: ")
+        print("Instructions/Help: h")
+        print("----------------------------")
 
     # Returns size of given playlist
     def getPlaylistSize(self, p):
@@ -139,6 +145,10 @@ class Player:
             elif (inp in ["Favorite", "favorite", "F", "f"]):
                 song = self.songFormat(self.curSong)
                 self.favorite(song)
+            
+            # Displaying information menu
+            elif (inp in ["Help", "help", "Info", "info", "H", "h", "I", "i"]):
+                self.printInstructions()
     
     # Pausing
     def pause(self):
