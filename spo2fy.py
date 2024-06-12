@@ -17,9 +17,9 @@ class Player:
 
     # Starting Instructions & Playlist Selecting
     def __init__(self):
-        print("------------------")
-        print("Spotify 2 (Version Beta 1.7)")
-        print("------------------")
+        print("----------------------------")
+        print("Spo2fy (Version Beta 1.8)")
+        print("----------------------------")
         print("Basic Commands")
         print("Pause: p")
         print("Unpause: u")
@@ -29,7 +29,7 @@ class Player:
         print("Current Song: ?")
         print("Change Playlists: c")
         print("Favorite Current Song: f")
-        print("------------------")
+        print("----------------------------")
 
         self.playlist = input("Select Playlist: ")
 
@@ -170,7 +170,10 @@ class Player:
             favesR = open("favorites.txt", "r")
             lines = favesR.readlines()
 
-            if len(lines) != 1:
+            if len(lines) == 2 and lines[0][:-1] == song:
+                newFavesA.write(lines[1][:-1])
+
+            elif len(lines) != 1:
                 # Added means whether or not the first line was added
                 added = False
                 if lines[0][:-1] != song:
