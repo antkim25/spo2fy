@@ -9,7 +9,7 @@ mixer.init()
 
 # Music Player Class
 class Player:
-    version = 2.4
+    version = 2.5
     paused = False
     playlist = ""
     curSong = ""
@@ -27,22 +27,26 @@ class Player:
         
     # Printing instructions/commands
     def printInstructions(self):
-        print("----------------------------")
-        print("Spo2fy (Version Beta " + str(self.version) + ")")
-        print("----------------------------")
+        print("------------------")
+        print("Spo2fy Version", + self.version)
+        print("ATCS Fair Demo!")
+        print("Created by Daniel Han, Anthony Kim, Yaejun Myung, Dhyan Sankar")
+        print("------------------")
         print("All Commands")
         print("Change Playlists: c")
         print("Current Song: ?")
         print("Favorite/Unfavorite Current Song: f")
         print("Instructions/Help: h")
+        print("Loop: l")
         print("Pause: p")
         print("Quit: q")
+        print("Restart: r")
         print("Skip: s")
-        print("Toggle: t")
-        print("Toggle Loop: l")
+        print("Fast Forward/Rewind [x] seconds: +/-[x]")
+        print("Toggle Pause: t")
         print("Unpause: u")
         print("Volume Down/Up: </>")
-        print("----------------------------")
+        print("------------------")
 
     # Returns size of given playlist
     def getPlaylistSize(self, p):
@@ -64,6 +68,11 @@ class Player:
     
     # Randomly picks song
     def songPicker(self):
+        # If playlist is empty
+        if self.getPlaylistSize(self.playlist) == 0:
+            print("Playlist is empty! Go add songs!")
+            self.quit()
+
         newSong = sys_random.choice(os.listdir("playlists/"+self.playlist))
 
         # Ensures "no song twice in a row" doesn't apply for one-song playlists
@@ -97,6 +106,10 @@ class Player:
         # Prints the currently playing message (if not looping)
         if not self.looping:
             print("Currently Playing: " + self.songFormat(self.curSong))
+    
+    # Quit!!
+    def quit(self):
+        os._exit(1)
 
     # Checking for input
     def inputChecker(self):
@@ -170,7 +183,25 @@ class Player:
 
             # Quitting program
             elif (inp in ["Exit", "exit", "Quit", "quit", "Q", "q", "E", "e"]):
-                os._exit(1)
+                print("Quit Program!")
+                self.quit()
+
+            # Restart current song
+            elif (inp in ["Restart", "restart", "R", "r"]):
+                mixer.music.rewind()
+                print("Restarted: " + self.songFormat(self.curSong))
+
+            # Fast Forwarded/Rewinded [x] seconds
+            elif len(inp) >= 2 and inp[1:].isnumeric() and inp[0] in ["+", "-"]:
+                timeChanged = int(inp[1:])
+                curPos = mixer.music.get_pos() // 1000
+                if inp[0] == "+":
+                    newPos = curPos + timeChanged
+                    print("Fast Forwarded", timeChanged, "seconds!")
+                elif inp[0] == "-":
+                    newPos = curPos - timeChanged
+                    print("Rewinded", timeChanged, "seconds!")
+                mixer.music.set_pos(newPos)
     
     # Pausing
     def pause(self):
