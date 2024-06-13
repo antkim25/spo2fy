@@ -9,7 +9,7 @@ mixer.init()
 
 # Music Player Class
 class Player:
-    version = 2.3
+    version = 2.4
     paused = False
     playlist = ""
     curSong = ""
@@ -27,21 +27,22 @@ class Player:
         
     # Printing instructions/commands
     def printInstructions(self):
-        print("------------------")
-        print("Spo2fy Version", str(self.version))
-        print("------------------")
+        print("----------------------------")
+        print("Spo2fy (Version Beta " + str(self.version) + ")")
+        print("----------------------------")
         print("All Commands")
         print("Change Playlists: c")
         print("Current Song: ?")
         print("Favorite/Unfavorite Current Song: f")
         print("Instructions/Help: h")
         print("Pause: p")
+        print("Quit: q")
         print("Skip: s")
         print("Toggle: t")
         print("Toggle Loop: l")
         print("Unpause: u")
         print("Volume Down/Up: </>")
-        print("------------------")
+        print("----------------------------")
 
     # Returns size of given playlist
     def getPlaylistSize(self, p):
@@ -166,6 +167,10 @@ class Player:
                     mixer.music.set_volume(round(self.volume - 0.1, 1))
                     self.volume = round(self.volume - 0.1, 1)
                     print("Volume Changed to:", self.volume)
+
+            # Quitting program
+            elif (inp in ["Exit", "exit", "Quit", "quit", "Q", "q", "E", "e"]):
+                os._exit(1)
     
     # Pausing
     def pause(self):
